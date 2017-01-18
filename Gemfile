@@ -13,6 +13,8 @@ gem 'sqlite3'
 gem 'redis', '~> 3.0'
 gem 'redis-namespace'
 
+gem 'rubyzip'
+
 group :development, :test do
   gem 'byebug', platform: :mri
   gem 'pry-byebug'

@@ -144,6 +144,7 @@ GEM
     rubocop-rspec (1.10.0)
       rubocop (>= 0.42.0)
     ruby-progressbar (1.8.1)
+    rubyzip (1.2.0)
     sexp_processor (4.7.0)
     slop (3.6.0)
     spring (2.0.0)
@@ -185,6 +186,7 @@ DEPENDENCIES
   redis-namespace
   rubocop-checkstyle_formatter
   rubocop-rspec
+  rubyzip
   spring
   spring-watcher-listen (~> 2.0.0)
   sqlite3
