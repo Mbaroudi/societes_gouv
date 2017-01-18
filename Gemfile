@@ -15,6 +15,8 @@ gem 'redis-namespace'
 
 group :development, :test do
   gem 'byebug', platform: :mri
+  gem 'pry-byebug'
+  gem 'pry'
 end
 
 group :development do
