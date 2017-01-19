@@ -10,10 +10,14 @@ gem 'rails', '~> 5.0.1'
 gem 'puma', '~> 3.0'
 
 gem 'sqlite3'
+
+gem 'connection_pool', '~> 2.2'
 gem 'redis', '~> 3.0'
+gem 'redis-objects'
 gem 'redis-namespace'
 
 gem 'rubyzip'
+gem 'smarter_csv'
 
 group :development, :test do
   gem 'byebug', platform: :mri
