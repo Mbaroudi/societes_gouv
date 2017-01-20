@@ -11,23 +11,28 @@ class Entreprise
     @infos = infos
   end
 
-  def self.process_rows(rows)
-    rows.each do |row|
+  def self.process_row(row)
+    redis_key = [row[:siren].to_s, row[:nic].to_s].join('')
+    redis_hashkey = Redis::HashKey.new(redis_key)
+
+    row.each do |key, value|
+      redis_hashkey[key] = value
     end
   end
 
   def self.import_csv
     options = {
-      chunk_size: 100,
+      chunk_size: 200,
       col_sep: ";",
       row_sep: "\r\n",
+      convert_values_to_numeric: false,
       key_mapping: {},
       file_encoding: "windows-1252"
     }
-    binding.pry
+
     SmarterCSV.process(@csv_path, options) do |chunk|
-      chunk.each do |rows|
-        Entreprise.process_rows(rows)
+      chunk.each do |row|
+        Entreprise.process_row(row)
       end
     end
   end
