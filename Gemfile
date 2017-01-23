@@ -9,7 +9,9 @@ gem 'rails', '~> 5.0.1'
 
 gem 'puma', '~> 3.0'
 
-gem 'sqlite3'
+gem 'pg'
+
+gem 'textacular'
 
 gem 'connection_pool', '~> 2.2'
 gem 'redis', '~> 3.0'
