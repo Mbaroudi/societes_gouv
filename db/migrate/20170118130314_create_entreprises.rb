@@ -23,7 +23,7 @@ class CreateEntreprises < ActiveRecord::Migration[5.0]
       t.string :indice_repetition
       t.string :type_voie
       t.string :libelle_voie
-      t.string :zip
+      t.string :code_postal
       t.string :cedex
       t.string :region
       t.string :libelle

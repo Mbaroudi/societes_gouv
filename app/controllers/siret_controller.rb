@@ -1,11 +1,11 @@
 class SiretController < ApplicationController
   def show
     # NICE SEGURIDAD
-    r = Redis::HashKey.new(params[:id])
-    if r.all.empty?
+    r = Entreprise.find_by(siret: params[:id])
+    if r.nil?
       render json: { message: 'no results found' }, status: 404
     else
-      render json: { etablissement: r.all }, status: 200
+      render json: { etablissement: r }, status: 200
     end
   end
 

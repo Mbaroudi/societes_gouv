@@ -9,7 +9,7 @@ class Entreprise < ApplicationRecord
       unless Entreprise.find_by(siren: row[:siren])
         Entreprise.create(
           siren: row[:siren],
-          siret: row[:siren] << row[:nic],
+          siret: row[:siren] + row[:nic],
           nic: row[:nic],
           l1_normalisee: row[:l1_normalisee],
           l2_normalisee: row[:l2_normalisee],
@@ -29,7 +29,7 @@ class Entreprise < ApplicationRecord
           indice_repetition: row[:indrep],
           type_voie: row[:typvoie],
           libelle_voie: row[:libvoie],
-          zip: row[:codpos],
+          code_postal: row[:codpos],
           cedex: row[:cedex],
           region: row[:rpet],
           libelle: row[:libreg],

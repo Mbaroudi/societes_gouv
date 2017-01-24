@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 20170118130314) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "entreprises", force: :cascade do |t|
     t.string   "siren"
     t.string   "siret"
@@ -34,7 +37,7 @@ ActiveRecord::Schema.define(version: 20170118130314) do
     t.string   "indice_repetition"
     t.string   "type_voie"
     t.string   "libelle_voie"
-    t.string   "zip"
+    t.string   "code_postal"
     t.string   "cedex"
     t.string   "region"
     t.string   "libelle"
@@ -134,9 +137,9 @@ ActiveRecord::Schema.define(version: 20170118130314) do
     t.string   "telephone"
     t.datetime "created_at",                                                null: false
     t.datetime "updated_at",                                                null: false
-    t.index ["nom"], name: "index_entreprises_on_nom"
-    t.index ["nom_raison_sociale"], name: "index_entreprises_on_nom_raison_sociale"
-    t.index ["siren"], name: "index_entreprises_on_siren"
+    t.index ["nom"], name: "index_entreprises_on_nom", using: :btree
+    t.index ["nom_raison_sociale"], name: "index_entreprises_on_nom_raison_sociale", using: :btree
+    t.index ["siren"], name: "index_entreprises_on_siren", using: :btree
   end
 
 end
