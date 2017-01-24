@@ -4,6 +4,10 @@ require 'zip'
 class Entreprise < ApplicationRecord
   attr_accessor :csv_path
 
+  def self.searchable_columns
+    [:siren, :siret, :nom_raison_sociale]
+  end
+
   def self.process_row(row)
     row.each do |key, value|
       unless Entreprise.find_by(siren: row[:siren])

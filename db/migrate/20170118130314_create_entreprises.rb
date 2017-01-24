@@ -3,7 +3,7 @@ class CreateEntreprises < ActiveRecord::Migration[5.0]
   def change
     create_table :entreprises do |t|
       t.string :siren, index: true
-      t.string :siret
+      t.string :siret, index: true
       t.string :nic
       t.string :l1_normalisee
       t.string :l2_normalisee
@@ -65,7 +65,7 @@ class CreateEntreprises < ActiveRecord::Migration[5.0]
       t.string :caractere_auxiliaire
       t.string :nom_raison_sociale, index: true
       t.string :sigle
-      t.string :nom, index: true
+      t.string :nom
       t.string :prenom
       t.string :civilite
       t.string :numero_rna
@@ -123,5 +123,10 @@ class CreateEntreprises < ActiveRecord::Migration[5.0]
       t.string :telephone
       t.timestamps
     end
+
+    execute "
+      create index on entreprises using gin(to_tsvector('french', siren));
+      create index on entreprises using gin(to_tsvector('french', siret));
+      create index on entreprises using gin(to_tsvector('french', nom_raison_sociale));"
   end
 end
