@@ -6,6 +6,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'rails', '~> 5.0.1'
+gem 'rack-cors'
 
 gem 'puma', '~> 3.0'
 
@@ -25,6 +26,7 @@ group :development, :test do
   gem 'byebug', platform: :mri
   gem 'pry'
   gem 'pry-byebug'
+  gem 'bulk_insert'
 end
 
 group :development do
