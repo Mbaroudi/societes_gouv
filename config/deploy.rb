@@ -4,7 +4,7 @@ require 'mina/git'
 
 set :domain, '94.23.0.49'
 set :port, 22
-set :repository, 'ssh://git@94.23.0.49:22/opt/git/societes_gouv'
+set :repository, '/opt/git/societes_gouv'
 set :branch, 'master'
 set :deploy_to, '/var/www/societes_gouv'
 set :user, 'deploy'    # Username in the server to SSH to.
@@ -70,7 +70,7 @@ task :deploy => :environment do
     # invoke :'rails:assets_precompile'
 
     to :launch do
-      queue "/etc/init.d/#{user} upgrade "
+      queue "touch #{deploy_to}/current/tmp/restart.txt"
     end
   end
 end
