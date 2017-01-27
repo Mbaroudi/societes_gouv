@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'zip'
+require 'set'
 
 class Entreprise < ApplicationRecord
   attr_accessor :csv_path
@@ -8,11 +9,17 @@ class Entreprise < ApplicationRecord
     [:siren, :siret, :nom_raison_sociale]
   end
 
+  def self.sirets_processed
+    @sirets_processed ||= []
+  end
+
   def self.process_row(row)
-    return if Entreprise.find_by(siren: row[:siren])
-    Entreprise.create(
+    siret = row[:siren] + row[:nic]
+    sirets_processed << siret
+
+    entreprise_attrs = {
       siren: row[:siren],
-      siret: row[:siren] + row[:nic],
+      siret: siret,
       nic: row[:nic],
       l1_normalisee: row[:l1_normalisee],
       l2_normalisee: row[:l2_normalisee],
@@ -130,12 +137,24 @@ class Entreprise < ApplicationRecord
       indicateur_mise_a_jour_nic_siege: row[:mnicsiege],
       siret_predecesseur_successeur: row[:siretps],
       telephone: row[:tel]
-    )
+    }
+
+    #entreprise_already_processed = sirets_processed.include?(siret)
+
+    #if entreprise_already_processed
+    #  e = Entreprise.find_by(siret: siret)
+    #  e.update_attributes(entreprise_attrs)
+    #  return "existing entreprise"
+    #else
+    #  return Entreprise.new(entreprise_attrs)
+    #end
+
+    Entreprise.new(entreprise_attrs)
   end
 
   def self.import_csv
     options = {
-      chunk_size: 200,
+      chunk_size: 1000,
       col_sep: ';',
       row_sep: "\r\n",
       convert_values_to_numeric: false,
@@ -144,15 +163,46 @@ class Entreprise < ApplicationRecord
     }
 
     @csv_path = 'public/sirc-17804_9075_14211_2017020_E_Q_20170121_015800268.csv'
+
     start_time = Time.now.to_i
     entreprise_count_before = Entreprise.count
+
+    # IMPORT
     SmarterCSV.process(@csv_path, options) do |chunk|
-      Entreprise.transaction do
-        chunk.each do |row|
-          Entreprise.process_row(row)
-        end
+      entreprises = []
+
+      chunk.each do |row|
+        entreprises << Entreprise.process_row(row)
+      end
+
+      begin
+        to_import_entreprises = entreprises.select{ |e| e != "existing entreprise" }
+        Entreprise.import(to_import_entreprises)
+        entreprises.clear
+        to_import_entreprises.clear
+      rescue StandardError => e
+        byebug
       end
     end
+
+    # CLEANUP
+    to_delete_entrprises_id = []
+    sirets_count = { }
+
+    sirets_processed.each{ |s| sirets_count[s] ||= 0; sirets_count[s] += 1}
+    sirets_with_doublons = sirets_count.select{|_,v| v > 1 }.keys
+    sirets_with_doublons.each do |siret_doublon|
+      # Keep only the last copy of it, we rely on id
+      ids_entreprises_doublons = Entreprise.where(siret: siret_doublon).order(id: :asc).pluck(:id)
+      ids_entreprises_doublons.pop
+
+      to_delete_entrprises_id << ids_entreprises_doublons
+    end
+
+    to_delete_entrprises_id.flatten!
+    Entreprise.where(id: to_delete_entrprises_id).delete_all
+
+
     end_time = Time.now.to_i
     entreprise_count_after = Entreprise.count
 

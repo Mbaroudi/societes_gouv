@@ -21,7 +21,7 @@ gem 'redis-objects'
 
 gem 'rubyzip'
 gem 'smarter_csv'
-gem 'bulk_insert'
+gem 'activerecord-import'
 
 group :development, :test do
   gem 'byebug', platform: :mri
