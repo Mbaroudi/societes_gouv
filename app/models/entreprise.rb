@@ -181,7 +181,6 @@ class Entreprise < ApplicationRecord
       rescue StandardError => e
         byebug
       end
-      puts "ending chunk #{num_chunk}"
     end
 
     # CLEANUP
