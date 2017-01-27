@@ -2,7 +2,7 @@ defaults: &defaults
   adapter: postgresql
   encoding: unicode
   host: localhost
-  pool: 5
+  pool: 15
   username: societes_gouv
   password: password
 

@@ -2,6 +2,9 @@ require 'open-uri'
 require 'zip'
 require 'set'
 
+$sirets_processed = []
+$active_threads = []
+
 class Entreprise < ApplicationRecord
   attr_accessor :csv_path
 
@@ -9,13 +12,9 @@ class Entreprise < ApplicationRecord
     [:siren, :siret, :nom_raison_sociale]
   end
 
-  def self.sirets_processed
-    @sirets_processed ||= []
-  end
-
   def self.process_row(row)
     siret = row[:siren] + row[:nic]
-    sirets_processed << siret
+    $sirets_processed << siret
 
     entreprise_attrs = {
       siren: row[:siren],
@@ -166,30 +165,42 @@ class Entreprise < ApplicationRecord
 
     start_time = Time.now.to_i
     entreprise_count_before = Entreprise.count
+    num_chunk = 0;
 
     # IMPORT
     SmarterCSV.process(@csv_path, options) do |chunk|
-      entreprises = []
+      num_chunk += 1;
 
-      chunk.each do |row|
-        entreprises << Entreprise.process_row(row)
+      t = Thread.new(num_chunk) do
+        puts "starting chunk #{num_chunk}"
+        entreprises = []
+
+        chunk.each do |row|
+          entreprises << Entreprise.process_row(row)
+        end
+
+        begin
+          to_import_entreprises = entreprises.select{ |e| e != "existing entreprise" }
+          Entreprise.import(to_import_entreprises)
+          entreprises.clear
+          to_import_entreprises.clear
+        rescue StandardError => e
+          byebug
+        end
+        puts "ending chunk #{num_chunk}"
       end
 
-      begin
-        to_import_entreprises = entreprises.select{ |e| e != "existing entreprise" }
-        Entreprise.import(to_import_entreprises)
-        entreprises.clear
-        to_import_entreprises.clear
-      rescue StandardError => e
-        byebug
-      end
+      $active_threads << t
     end
+
+    #sleep 0.1 while !$active_threads.empty?
+    $active_threads.each{ |t| t.join }
 
     # CLEANUP
     to_delete_entrprises_id = []
     sirets_count = { }
 
-    sirets_processed.each{ |s| sirets_count[s] ||= 0; sirets_count[s] += 1}
+    $sirets_processed.each{ |s| sirets_count[s] ||= 0; sirets_count[s] += 1}
     sirets_with_doublons = sirets_count.select{|_,v| v > 1 }.keys
     sirets_with_doublons.each do |siret_doublon|
       # Keep only the last copy of it, we rely on id
