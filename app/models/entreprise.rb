@@ -3,7 +3,6 @@ require 'zip'
 require 'set'
 
 $sirets_processed = []
-$active_threads = []
 
 class Entreprise < ApplicationRecord
   attr_accessor :csv_path
@@ -165,36 +164,25 @@ class Entreprise < ApplicationRecord
 
     start_time = Time.now.to_i
     entreprise_count_before = Entreprise.count
-    num_chunk = 0;
 
     # IMPORT
     SmarterCSV.process(@csv_path, options) do |chunk|
-      num_chunk += 1;
+      entreprises = []
 
-      t = Thread.new(num_chunk) do
-        puts "starting chunk #{num_chunk}"
-        entreprises = []
-
-        chunk.each do |row|
-          entreprises << Entreprise.process_row(row)
-        end
-
-        begin
-          to_import_entreprises = entreprises.select{ |e| e != "existing entreprise" }
-          Entreprise.import(to_import_entreprises)
-          entreprises.clear
-          to_import_entreprises.clear
-        rescue StandardError => e
-          byebug
-        end
-        puts "ending chunk #{num_chunk}"
+      chunk.each do |row|
+        entreprises << Entreprise.process_row(row)
       end
 
-      $active_threads << t
+      begin
+        to_import_entreprises = entreprises.select{ |e| e != "existing entreprise" }
+        Entreprise.import(to_import_entreprises)
+        entreprises.clear
+        to_import_entreprises.clear
+      rescue StandardError => e
+        byebug
+      end
+      puts "ending chunk #{num_chunk}"
     end
-
-    #sleep 0.1 while !$active_threads.empty?
-    $active_threads.each{ |t| t.join }
 
     # CLEANUP
     to_delete_entrprises_id = []
