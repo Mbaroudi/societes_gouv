@@ -19,6 +19,9 @@ gem 'redis', '~> 3.0'
 gem 'redis-namespace'
 gem 'redis-objects'
 
+gem 'resque'
+gem 'sinatra', '~> 2.0.0.beta2'
+
 gem 'rubyzip'
 gem 'smarter_csv'
 gem 'activerecord-import'

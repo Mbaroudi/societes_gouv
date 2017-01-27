@@ -16,5 +16,8 @@ module SocietesGouv
   class Application < Rails::Application
     config.api_only = true
     config.active_record.schema_format = :sql
+
+    # Background tasks
+    config.active_job.queue_adapter = :resque
   end
 end
