@@ -144,13 +144,22 @@ class Entreprise < ApplicationRecord
     }
 
     @csv_path = 'public/sirc-17804_9075_14211_2017020_E_Q_20170121_015800268.csv'
+    start_time = Time.now.to_i
+    entreprise_count_before = Entreprise.count
     SmarterCSV.process(@csv_path, options) do |chunk|
-      chunk.each do |row|
-        Entreprise.transaction do
+      Entreprise.transaction do
+        chunk.each do |row|
           Entreprise.process_row(row)
         end
       end
     end
+    end_time = Time.now.to_i
+    entreprise_count_after = Entreprise.count
+
+    duration = end_time - start_time
+    entries_added = entreprise_count_after - entreprise_count_before
+
+    puts "Lasted #{duration} seconds for #{entries_added} entreprises added"
   end
 
   def self.read_distant_base

@@ -21,12 +21,12 @@ gem 'redis-objects'
 
 gem 'rubyzip'
 gem 'smarter_csv'
+gem 'bulk_insert'
 
 group :development, :test do
   gem 'byebug', platform: :mri
   gem 'pry'
   gem 'pry-byebug'
-  gem 'bulk_insert'
 end
 
 group :development do
