@@ -11,7 +11,6 @@ gem 'rack-cors'
 gem 'puma', '~> 3.0'
 
 gem 'pg'
-
 gem 'textacular'
 
 gem 'connection_pool', '~> 2.2'
