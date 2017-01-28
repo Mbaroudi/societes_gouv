@@ -20,6 +20,7 @@ set :shared_paths, [
   'tmp/sockets',
   'public/system',
   'public/uploads',
+  'public/phat_dump_janvier.csv',
   'config/database.yml',
   'config/environments/production.rb',
   'config/secrets.yml',

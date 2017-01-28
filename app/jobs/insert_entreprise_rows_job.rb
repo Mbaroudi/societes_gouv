@@ -1,12 +1,10 @@
 $sirets_processed ||= []
 
 class InsertEntrepriseRowsJob < ApplicationJob
-  queue_as :default
-
   def perform(lines)
     entreprises = []
 
-    lines.each do |line|
+    for line in lines do
       entreprises << new_entreprise_from_line(line)
     end
 

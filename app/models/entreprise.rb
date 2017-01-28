@@ -10,9 +10,11 @@ class Entreprise < ApplicationRecord
     [:siren, :siret, :nom_raison_sociale]
   end
 
-  def self.import_csv
+  def self.import_csv(options = {})
+    Rails.logger.level = :fatal if options[:quiet]
+
     options = {
-      chunk_size: 1000,
+      chunk_size: 10000,
       col_sep: ';',
       row_sep: "\r\n",
       convert_values_to_numeric: false,
@@ -27,8 +29,12 @@ class Entreprise < ApplicationRecord
     entreprise_count_before = Entreprise.count
 
     # IMPORT
-    SmarterCSV.process(@csv_path, options) do |chunk|
-      InsertEntrepriseRowsJob.perform_later(chunk)
+    Benchmark.bm(7) do |x|
+      x.report(:csv_pro) do
+        SmarterCSV.process(@csv_path, options) do |chunk|
+          InsertEntrepriseRowsJob.perform_later(chunk)
+        end
+      end
     end
 
     ## CLEANUP
