@@ -1,19 +1,57 @@
 $sirets_processed ||= []
 
-class InsertEntrepriseRowsJob < ApplicationJob
-  def perform(lines)
+#class InsertEntrepriseRowsJob < ApplicationJob
+  #queue_as :insert_rows
+
+class InsertEntrepriseRowsJob
+  attr_accessor :lines
+
+  def initialize(lines)
+    @lines = lines
+  end
+
+  #def perform(lines)
+  def perform
     entreprises = []
 
     for line in lines do
-      entreprises << new_entreprise_from_line(line)
+      entreprises << entreprise_attrs_from_line(line)
     end
 
-    Entreprise.import(entreprises)
+
+    ar_keys = ['created_at', 'updated_at']
+    ar_keys << entreprises.first.keys.map(&:to_s)
+    ar_keys.flatten
+
+    ar_values_string = entreprises.map{ |h| value_string_from_enterprise_hash(h) }.join(', ')
+
+    ar_query_string = " INSERT INTO entreprises (#{ar_keys.join(',')})
+                        VALUES
+                        #{ar_values_string}; "
+
+    ActiveRecord::Base.connection.execute(ar_query_string)
+    true
+
+    # Entreprise.transaction do
+    #   Entreprise.import(entreprises)
+    # end
   end
 
-  def new_entreprise_from_line(line)
+  def value_string_from_enterprise_hash(hash)
+    now_string = Time.now.utc.to_s
+    between_parenthesis = hash.values.map do |v|
+      if v.nil?
+        "NULL"
+      else
+        "'#{v.gsub("'","''")}'"
+      end
+    end.join(',')
+
+    "('#{now_string}', '#{now_string}', #{between_parenthesis})"
+  end
+
+  def entreprise_attrs_from_line(line)
     siret = line[:siren] + line[:nic]
-    $sirets_processed << siret
 
     entreprise_attrs = {
       siren: line[:siren],
@@ -137,7 +175,5 @@ class InsertEntrepriseRowsJob < ApplicationJob
       siret_predecesseur_successeur: line[:siretps],
       telephone: line[:tel]
     }
-
-    Entreprise.new(entreprise_attrs)
   end
 end

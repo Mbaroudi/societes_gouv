@@ -15,6 +15,7 @@ class Entreprise < ApplicationRecord
 
     options = {
       chunk_size: 10000,
+      #chunk_size: 30,
       col_sep: ';',
       row_sep: "\r\n",
       convert_values_to_numeric: false,
@@ -22,17 +23,18 @@ class Entreprise < ApplicationRecord
       file_encoding: 'windows-1252'
     }
 
-    #@csv_path = 'public/sirc-17804_9075_14211_2017020_E_Q_20170121_015800268.csv'
-    @csv_path = 'public/phat_dump_janvier.csv'
+    @csv_path = 'public/sirc-17804_9075_14211_2017020_E_Q_20170121_015800268.csv'
+    #@csv_path = 'public/phat_dump_janvier.csv'
 
-    start_time = Time.now.to_i
     entreprise_count_before = Entreprise.count
 
     # IMPORT
     Benchmark.bm(7) do |x|
       x.report(:csv_pro) do
         SmarterCSV.process(@csv_path, options) do |chunk|
-          InsertEntrepriseRowsJob.perform_later(chunk)
+          j = InsertEntrepriseRowsJob.new(chunk)
+          j.perform
+          #InsertEntrepriseRowsJob.perform_now(chunk)
         end
       end
     end
@@ -54,14 +56,10 @@ class Entreprise < ApplicationRecord
     #to_delete_entrprises_id.flatten!
     #Entreprise.where(id: to_delete_entrprises_id).delete_all
 
-
-    end_time = Time.now.to_i
     entreprise_count_after = Entreprise.count
-
-    duration = end_time - start_time
     entries_added = entreprise_count_after - entreprise_count_before
 
-    puts "Lasted #{duration} seconds for #{entries_added} entreprises added"
+    puts "#{entries_added} entreprises added"
   end
 
   def self.read_distant_base
