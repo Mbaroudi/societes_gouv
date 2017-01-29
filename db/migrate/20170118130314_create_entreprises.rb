@@ -9,7 +9,7 @@ class CreateEntreprises < ActiveRecord::Migration[5.0]
       t.string :l3_normalisee
       t.string :l4_normalisee
       t.string :l5_normalisee
-      t.string :l6_normalisee
+      t.string :l6_normalisee, index: true
       t.string :l7_normalisee
       t.string :l1_declaree
       t.string :l2_declaree
@@ -44,7 +44,7 @@ class CreateEntreprises < ActiveRecord::Migration[5.0]
       t.string :date_introduction_base_diffusion
       t.string :nature_entrepreneur_individuel
       t.string :libelle_nature_entrepreneur_individuel
-      t.string :activite_principale
+      t.string :activite_principale, index: true
       t.string :libelle_activite_principale
       t.string :date_validite_activite_principale
       t.string :tranche_effectif_salarie
