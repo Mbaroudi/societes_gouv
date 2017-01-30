@@ -126,6 +126,8 @@ class CreateEntreprises < ActiveRecord::Migration[5.0]
     execute "
       create index on entreprises using gin(to_tsvector('french', siren));
       create index on entreprises using gin(to_tsvector('french', siret));
+      create index on entreprises using gin(to_tsvector('french', activite_principale));
+      create index on entreprises using gin(to_tsvector('french', l6_normalisee));
       create index on entreprises using gin(to_tsvector('french', nom_raison_sociale));"
   end
 end
