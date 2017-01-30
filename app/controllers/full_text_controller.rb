@@ -1,7 +1,7 @@
 class FullTextController < ApplicationController
   def show
     # NICE SEGURIDAD
-    r = Entreprise.fuzzy_search(params[:id]).limit(10)
+    r = Etablissement.fuzzy_search(params[:id]).limit(10)
     if r.nil?
       render json: { message: 'no results found' }, status: 404
     else
