@@ -1,9 +1,9 @@
 $sirets_processed ||= []
 
-#class InsertEntrepriseRowsJob < ApplicationJob
+#class InsertEtablissementRowsJob < ApplicationJob
   #queue_as :insert_rows
 
-class InsertEntrepriseRowsJob
+class InsertEtablissementRowsJob
   attr_accessor :lines
 
   def initialize(lines)
@@ -12,28 +12,28 @@ class InsertEntrepriseRowsJob
 
   #def perform(lines)
   def perform
-    entreprises = []
+    etablissements = []
 
     for line in lines do
-      entreprises << entreprise_attrs_from_line(line)
+      etablissements << etablissement_attrs_from_line(line)
     end
 
 
     ar_keys = ['created_at', 'updated_at']
-    ar_keys << entreprises.first.keys.map(&:to_s)
+    ar_keys << etablissements.first.keys.map(&:to_s)
     ar_keys.flatten
 
-    ar_values_string = entreprises.map{ |h| value_string_from_enterprise_hash(h) }.join(', ')
+    ar_values_string = etablissements.map{ |h| value_string_from_enterprise_hash(h) }.join(', ')
 
-    ar_query_string = " INSERT INTO entreprises (#{ar_keys.join(',')})
+    ar_query_string = " INSERT INTO etablissements (#{ar_keys.join(',')})
                         VALUES
                         #{ar_values_string}; "
 
     ActiveRecord::Base.connection.execute(ar_query_string)
     true
 
-    # Entreprise.transaction do
-    #   Entreprise.import(entreprises)
+    # Etablissement.transaction do
+    #   Etablissement.import(etablissements)
     # end
   end
 
@@ -50,10 +50,10 @@ class InsertEntrepriseRowsJob
     "('#{now_string}', '#{now_string}', #{between_parenthesis})"
   end
 
-  def entreprise_attrs_from_line(line)
+  def etablissement_attrs_from_line(line)
     siret = line[:siren] + line[:nic]
 
-    entreprise_attrs = {
+    etablissement_attrs = {
       siren: line[:siren],
       siret: siret,
       nic: line[:nic],

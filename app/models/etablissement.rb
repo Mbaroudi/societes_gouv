@@ -3,7 +3,7 @@ require 'zip'
 
 $sirets_processed ||= []
 
-class Entreprise < ApplicationRecord
+class Etablissement < ApplicationRecord
   attr_accessor :csv_path
 
   def self.searchable_columns
@@ -26,15 +26,15 @@ class Entreprise < ApplicationRecord
     @csv_path = 'public/sirc-17804_9075_14211_2017020_E_Q_20170121_015800268.csv'
     #@csv_path = 'public/phat_dump_janvier.csv'
 
-    entreprise_count_before = Entreprise.count
+    etablissement_count_before = Etablissement.count
 
     # IMPORT
     Benchmark.bm(7) do |x|
       x.report(:csv_pro) do
         SmarterCSV.process(@csv_path, options) do |chunk|
-          j = InsertEntrepriseRowsJob.new(chunk)
+          j = InsertEtablissementRowsJob.new(chunk)
           j.perform
-          #InsertEntrepriseRowsJob.perform_now(chunk)
+          #InsertEtablissementRowsJob.perform_now(chunk)
         end
       end
     end
@@ -47,19 +47,19 @@ class Entreprise < ApplicationRecord
     #sirets_with_doublons = sirets_count.select{|_,v| v > 1 }.keys
     #sirets_with_doublons.each do |siret_doublon|
     #  # Keep only the last copy of it, we rely on id
-    #  ids_entreprises_doublons = Entreprise.where(siret: siret_doublon).order(id: :asc).pluck(:id)
-    #  ids_entreprises_doublons.pop
+    #  ids_etablissements_doublons = Etablissement.where(siret: siret_doublon).order(id: :asc).pluck(:id)
+    #  ids_etablissements_doublons.pop
 
-    #  to_delete_entrprises_id << ids_entreprises_doublons
+    #  to_delete_entrprises_id << ids_etablissements_doublons
     #end
 
     #to_delete_entrprises_id.flatten!
-    #Entreprise.where(id: to_delete_entrprises_id).delete_all
+    #Etablissement.where(id: to_delete_entrprises_id).delete_all
 
-    entreprise_count_after = Entreprise.count
-    entries_added = entreprise_count_after - entreprise_count_before
+    etablissement_count_after = Etablissement.count
+    entries_added = etablissement_count_after - etablissement_count_before
 
-    puts "#{entries_added} entreprises added"
+    puts "#{entries_added} etablissements added"
   end
 
   def self.read_distant_base
@@ -70,8 +70,8 @@ class Entreprise < ApplicationRecord
     filename = last_link.gsub('http://files.data.gouv.fr/sirene/', '')
     download = open(last_link)
     IO.copy_stream(download, "public/#{filename}")
-    Entreprise.extract_zip("public/#{filename}", 'public/')
-    Entreprise.import_csv
+    Etablissement.extract_zip("public/#{filename}", 'public/')
+    Etablissement.import_csv
   end
 
   def self.extract_zip(file, destination)
