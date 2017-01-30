@@ -2,11 +2,12 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.5
--- Dumped by pg_dump version 9.5.5
+-- Dumped from database version 9.6.1
+-- Dumped by pg_dump version 9.6.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -218,14 +219,14 @@ CREATE TABLE schema_migrations (
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: etablissements id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY etablissements ALTER COLUMN id SET DEFAULT nextval('etablissements_id_seq'::regclass);
 
 
 --
--- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ar_internal_metadata
@@ -233,7 +234,7 @@ ALTER TABLE ONLY ar_internal_metadata
 
 
 --
--- Name: etablissements_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: etablissements etablissements_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY etablissements
@@ -241,7 +242,7 @@ ALTER TABLE ONLY etablissements
 
 
 --
--- Name: schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY schema_migrations
@@ -266,35 +267,7 @@ CREATE INDEX entreprises_to_tsvector_idx1 ON etablissements USING gin (to_tsvect
 -- Name: entreprises_to_tsvector_idx2; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX entreprises_to_tsvector_idx2 ON etablissements USING gin (to_tsvector('french'::regconfig, (activite_principale)::text));
-
-
---
--- Name: entreprises_to_tsvector_idx3; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX entreprises_to_tsvector_idx3 ON etablissements USING gin (to_tsvector('french'::regconfig, (l6_normalisee)::text));
-
-
---
--- Name: entreprises_to_tsvector_idx4; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX entreprises_to_tsvector_idx4 ON etablissements USING gin (to_tsvector('french'::regconfig, (nom_raison_sociale)::text));
-
-
---
--- Name: index_etablissements_on_activite_principale; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_etablissements_on_activite_principale ON etablissements USING btree (activite_principale);
-
-
---
--- Name: index_etablissements_on_l6_normalisee; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_etablissements_on_l6_normalisee ON etablissements USING btree (l6_normalisee);
+CREATE INDEX entreprises_to_tsvector_idx2 ON etablissements USING gin (to_tsvector('french'::regconfig, (nom_raison_sociale)::text));
 
 
 --

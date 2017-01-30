@@ -6,9 +6,14 @@ $sirets_processed ||= []
 class Etablissement < ApplicationRecord
   attr_accessor :csv_path
 
-  def self.searchable_columns
-    [:siren, :siret, :nom_raison_sociale]
+  searchable do
+    text :nom_raison_sociale
   end
+
+  # Textacular
+  #def self.searchable_columns
+  #  [:siren, :siret, :nom_raison_sociale]
+  #end
 
   def self.import_csv(options = {})
     Rails.logger.level = :fatal if options[:quiet]
