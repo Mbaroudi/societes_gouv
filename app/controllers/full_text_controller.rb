@@ -2,18 +2,32 @@ class FullTextController < ApplicationController
   def show
     # NICE SEGURIDAD
     #r = Etablissement.fuzzy_search(params[:id]).limit(10)
-    r = Etablissement.search do
-      fulltext params[:id]
-    end.results
 
-    if r.nil?
+    page = params[:page] || 1
+
+    search = Etablissement.search do
+      fulltext params[:id]
+      paginate page: page, per_page: 3
+    end
+
+    results = search.results
+
+    if results.nil?
       render json: { message: 'no results found' }, status: 404
     else
-      render json: { etablissement: r }, status: 200
+      results_payload = {
+        total_results: search.total,
+        total_pages: results.total_pages,
+        per_page: results.per_page,
+        page: page,
+        etablissement: results
+      }
+
+      render json: results_payload, status: 200
     end
   end
 
   def full_text_params
-    params.permit(:id)
+    params.permit(:id, :page)
   end
 end
