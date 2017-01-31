@@ -24,6 +24,7 @@ set :shared_paths, [
   'config/database.yml',
   'config/environments/production.rb',
   'config/secrets.yml',
+  'solr'
 ]
 
 # This task is the environment that is loaded for most commands, such as
@@ -57,6 +58,9 @@ task :setup => :environment do
 
   queue! %[mkdir -p "#{deploy_to}/shared/config"]
   queue! %[chmod g+rx,u+rwx "#{deploy_to}/shared/config"]
+
+  queue! %[mkdir -p "#{deploy_to}/shared/solr"]
+  queue! %[chmod g+rx,u+rwx "#{deploy_to}/shared/solr"]
 end
 
 desc "Deploys the current version to the server."
