@@ -7,7 +7,7 @@ class FullTextController < ApplicationController
 
     search = Etablissement.search do
       fulltext params[:id]
-      paginate page: page, per_page: 3
+      paginate page: page, per_page: 10
     end
 
     results = search.results
