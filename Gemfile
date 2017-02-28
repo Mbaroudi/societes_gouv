@@ -21,15 +21,11 @@ gem 'redis-objects'
 gem 'resque'
 gem 'sinatra', '~> 2.0.0.beta2'
 
-# gem 'textacular'
-
 gem 'sunspot_rails'
 gem 'sunspot_solr'
 
 gem 'rubyzip'
 gem 'smarter_csv'
-# TODO remove me
-gem 'activerecord-import'
 
 gem 'progress_bar'
 
@@ -48,4 +44,8 @@ group :development do
   gem 'rubocop-rspec', require: false
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+end
+
+group :development, :test do
+    gem 'rspec-rails', '~> 3.5'
 end
