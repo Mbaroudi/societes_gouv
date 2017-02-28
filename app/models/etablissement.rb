@@ -10,17 +10,11 @@ class Etablissement < ApplicationRecord
     text :nom_raison_sociale
   end
 
-  # Textacular
-  #def self.searchable_columns
-  #  [:siren, :siret, :nom_raison_sociale]
-  #end
-
   def self.import_csv(options = {})
     Rails.logger.level = :fatal if options[:quiet]
 
     options = {
       chunk_size: 10000,
-      #chunk_size: 30,
       col_sep: ';',
       row_sep: "\r\n",
       convert_values_to_numeric: false,

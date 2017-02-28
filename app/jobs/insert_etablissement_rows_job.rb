@@ -169,7 +169,6 @@ class InsertEtablissementRowsJob
       indicateur_mise_a_jour_sigle: line[:msigle],
       indicateur_mise_a_jour_nature_juridique: line[:mnj],
       indicateur_mise_a_jour_activite_principale_entreprise: line[:mapen],
-
       indicateur_mise_a_jour_caractere_productif_entreprise: line[:mproden],
       indicateur_mise_a_jour_nic_siege: line[:mnicsiege],
       siret_predecesseur_successeur: line[:siretps],
