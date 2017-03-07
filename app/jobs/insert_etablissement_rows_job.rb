@@ -1,8 +1,5 @@
 $sirets_processed ||= []
 
-#class InsertEtablissementRowsJob < ApplicationJob
-  #queue_as :insert_rows
-
 class InsertEtablissementRowsJob
   attr_accessor :lines
 
@@ -10,7 +7,6 @@ class InsertEtablissementRowsJob
     @lines = lines
   end
 
-  #def perform(lines)
   def perform
     etablissements = []
 
@@ -31,14 +27,12 @@ class InsertEtablissementRowsJob
 
     ActiveRecord::Base.connection.execute(ar_query_string)
     true
-
-    # Etablissement.transaction do
-    #   Etablissement.import(etablissements)
-    # end
   end
 
   def value_string_from_enterprise_hash(hash)
+    # Used for updated_at and created_at that etablissement model requires
     now_string = Time.now.utc.to_s
+
     between_parenthesis = hash.values.map do |v|
       if v.nil?
         "NULL"
