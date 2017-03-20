@@ -43,9 +43,13 @@ group :development do
   gem 'rubocop-checkstyle_formatter', require: false
   gem 'rubocop-rspec', require: false
   gem 'spring'
+  gem 'spring-commands-rspec'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
 group :development, :test do
-    gem 'rspec-rails', '~> 3.5'
+  gem 'rspec-rails', '~> 3.5'
+  gem 'guard'
+  gem 'guard-rails', require: false
+  gem 'guard-rspec', require: false
 end
