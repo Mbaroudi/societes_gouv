@@ -33,6 +33,15 @@ group :development, :test do
   gem 'byebug', platform: :mri
   gem 'pry'
   gem 'pry-byebug'
+
+  gem 'rspec-rails', '~> 3.5'
+
+  gem 'guard'
+  gem 'guard-rails', require: false
+  gem 'guard-rspec', require: false
+
+  gem 'timecop'
+  gem 'growl'
 end
 
 group :development do
@@ -45,11 +54,4 @@ group :development do
   gem 'spring'
   gem 'spring-commands-rspec'
   gem 'spring-watcher-listen', '~> 2.0.0'
-end
-
-group :development, :test do
-  gem 'rspec-rails', '~> 3.5'
-  gem 'guard'
-  gem 'guard-rails', require: false
-  gem 'guard-rspec', require: false
 end
