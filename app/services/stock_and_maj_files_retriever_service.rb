@@ -42,6 +42,10 @@ class StockAndMajFilesRetrieverService
       "sirene_#{year}#{padded_month_number}_L_M.zip"
     end
 
+    def sirene_monthly_stock_filename_pattern
+      /.*sirene_#{Time.now.year}([0-9]{2})_L_M\.zip/
+    end
+
     def files_repository
       'http://files.data.gouv.fr/sirene'
     end
